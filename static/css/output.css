@@ -1,0 +1,235 @@
+/**
+ * YouTube to MP3 Converter - Custom Styles
+ * Additional styles that complement Tailwind CSS
+ */
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #475569;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Focus ring improvements */
+input:focus,
+button:focus {
+    outline: none;
+}
+
+/* Custom animations */
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.95);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.1);
+        opacity: 0;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Loading shimmer effect */
+.shimmer {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* Progress bar pulse */
+#progressBar {
+    position: relative;
+    overflow: hidden;
+}
+
+#progressBar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 100%
+    );
+    animation: shimmer 2s infinite;
+}
+
+/* Thumbnail placeholder */
+#videoThumbnail {
+    object-fit: cover;
+    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+}
+
+/* Toast animations */
+#toastContainer > div {
+    animation: slideIn 0.3s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Button press effect */
+button:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+/* Card hover effects */
+.hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode transition */
+html {
+    transition: background-color 0.3s ease;
+}
+
+/* Input placeholder animation */
+input::placeholder {
+    transition: opacity 0.2s ease;
+}
+
+input:focus::placeholder {
+    opacity: 0.5;
+}
+
+/* Status card entrance */
+#statusCard {
+    animation: fadeSlideIn 0.3s ease-out;
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* History item hover */
+#historyList > div {
+    transition: background-color 0.2s ease;
+}
+
+#historyList > div:hover {
+    background-color: rgba(239, 68, 68, 0.05);
+}
+
+.dark #historyList > div:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* Download button pulse when ready */
+@keyframes readyPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+    }
+}
+
+#downloadBtn {
+    animation: readyPulse 2s infinite;
+}
+
+#downloadBtn:hover {
+    animation: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    #videoInfo {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    #videoThumbnail {
+        width: 100%;
+        max-width: 200px;
+        height: auto;
+        aspect-ratio: 16/9;
+    }
+
+    #downloadSection > div {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    #downloadBtn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Print styles */
+@media print {
+    header,
+    footer,
+    #convertBtn,
+    #clearBtn,
+    #themeToggle,
+    #historySection,
+    #toastContainer {
+        display: none !important;
+    }
+}

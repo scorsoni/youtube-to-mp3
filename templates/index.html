@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT to MP3 - Conversor de YouTube para MP3</title>
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#fef2f2',
+                            100: '#fee2e2',
+                            200: '#fecaca',
+                            300: '#fca5a5',
+                            400: '#f87171',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                            800: '#991b1b',
+                            900: '#7f1d1d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}">
+</head>
+<body class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+
+    <!-- Header -->
+    <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <div class="flex items-center justify-center w-10 h-10 bg-red-500 rounded-lg">
+                    <i data-lucide="youtube" class="w-6 h-6 text-white"></i>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xl font-bold text-gray-900 dark:text-white">YT</span>
+                    <i data-lucide="arrow-right" class="w-5 h-5 text-gray-400"></i>
+                    <span class="text-xl font-bold text-red-500">MP3</span>
+                </div>
+            </div>
+
+            <!-- Theme Toggle -->
+            <button
+                id="themeToggle"
+                class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                title="Alternar tema"
+            >
+                <i data-lucide="sun" class="w-5 h-5 text-gray-600 dark:text-gray-300 hidden dark:block"></i>
+                <i data-lucide="moon" class="w-5 h-5 text-gray-600 dark:text-gray-300 block dark:hidden"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-8">
+
+        <!-- Hero Section -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                Conversor de YouTube para MP3
+            </h1>
+            <p class="text-gray-600 dark:text-gray-400">
+                Converta vídeos do YouTube em MP3 de forma rápida e sem anúncios
+            </p>
+        </div>
+
+        <!-- Converter Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mb-6">
+
+            <!-- URL Input -->
+            <div class="mb-4">
+                <label for="urlInput" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Link do YouTube
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i data-lucide="link" class="w-5 h-5 text-gray-400"></i>
+                    </div>
+                    <input
+                        type="url"
+                        id="urlInput"
+                        placeholder="Cole o link do YouTube aqui..."
+                        class="w-full pl-12 pr-4 py-4 text-lg border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all"
+                    >
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-3">
+                <button
+                    id="convertBtn"
+                    class="flex-1 flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 disabled:bg-red-300 dark:disabled:bg-red-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 disabled:cursor-not-allowed"
+                >
+                    <i data-lucide="download" class="w-5 h-5 convert-icon"></i>
+                    <i data-lucide="loader-2" class="w-5 h-5 animate-spin loading-icon hidden"></i>
+                    <span class="btn-text">Converter</span>
+                </button>
+                <button
+                    id="clearBtn"
+                    class="flex items-center justify-center gap-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-semibold py-4 px-6 rounded-xl transition-all duration-200"
+                    title="Limpar"
+                >
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Status Card (Hidden by default) -->
+        <div id="statusCard" class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mb-6 hidden">
+
+            <!-- Video Info -->
+            <div id="videoInfo" class="flex gap-4 mb-6 hidden">
+                <img
+                    id="videoThumbnail"
+                    src=""
+                    alt="Thumbnail"
+                    class="w-32 h-24 object-cover rounded-lg bg-gray-200 dark:bg-gray-700"
+                >
+                <div class="flex-1 min-w-0">
+                    <h3 id="videoTitle" class="font-semibold text-gray-900 dark:text-white truncate mb-1"></h3>
+                    <p id="videoChannel" class="text-sm text-gray-500 dark:text-gray-400 mb-2"></p>
+                    <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                        <span id="videoDuration" class="flex items-center gap-1">
+                            <i data-lucide="clock" class="w-4 h-4"></i>
+                            <span></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div id="progressContainer" class="mb-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span id="statusText" class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Aguardando...
+                    </span>
+                    <span id="progressPercent" class="text-sm text-gray-500 dark:text-gray-400">0%</span>
+                </div>
+                <div class="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div
+                        id="progressBar"
+                        class="h-full bg-gradient-to-r from-red-500 to-red-600 rounded-full transition-all duration-300"
+                        style="width: 0%"
+                    ></div>
+                </div>
+            </div>
+
+            <!-- Status Icon -->
+            <div id="statusIcon" class="flex items-center justify-center py-4 hidden">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="check-circle" class="w-8 h-8 text-green-500 success-icon hidden"></i>
+                    <i data-lucide="x-circle" class="w-8 h-8 text-red-500 error-icon hidden"></i>
+                    <span id="statusMessage" class="text-lg font-medium text-gray-700 dark:text-gray-300"></span>
+                </div>
+            </div>
+
+            <!-- Download Button (Hidden by default) -->
+            <div id="downloadSection" class="hidden">
+                <div class="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                            <i data-lucide="music" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <div>
+                            <p id="downloadFilename" class="font-medium text-gray-900 dark:text-white truncate max-w-xs"></p>
+                            <p id="downloadFilesize" class="text-sm text-gray-500 dark:text-gray-400"></p>
+                        </div>
+                    </div>
+                    <a
+                        id="downloadBtn"
+                        href="#"
+                        class="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-5 rounded-xl transition-all duration-200"
+                    >
+                        <i data-lucide="download" class="w-5 h-5"></i>
+                        <span>Baixar MP3</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorSection" class="hidden">
+                <div class="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800">
+                    <div class="flex items-start gap-3">
+                        <i data-lucide="alert-circle" class="w-5 h-5 text-red-500 mt-0.5"></i>
+                        <div>
+                            <p class="font-medium text-red-700 dark:text-red-400">Erro ao converter</p>
+                            <p id="errorMessage" class="text-sm text-red-600 dark:text-red-300 mt-1"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div id="historySection" class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hidden">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i data-lucide="history" class="w-5 h-5"></i>
+                    Histórico recente
+                </h2>
+                <button
+                    id="clearHistoryBtn"
+                    class="text-sm text-gray-500 dark:text-gray-400 hover:text-red-500 transition-colors"
+                >
+                    Limpar
+                </button>
+            </div>
+            <div id="historyList" class="space-y-3">
+                <!-- History items will be added here -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-4xl mx-auto px-4 py-8 text-center">
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+            Apenas para uso pessoal. Respeite os direitos autorais.
+        </p>
+    </footer>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
